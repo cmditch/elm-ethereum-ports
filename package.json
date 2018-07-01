@@ -1,0 +1,27 @@
+{
+    "name": "elm-ethereum-ports",
+    "version": "1.0.0",
+    "description": "Helpers to wire Elm ports to your elm-ethereum app.",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/cmditch/elm-ethereum-ports.git"
+    },
+    "keywords": [
+      "elm",
+      "elm-ethereum",
+      "ethereum",
+      "blockchain",
+      "ports"
+    ],
+    "author": "Coury Ditch",
+    "license": "MIT",
+    "bugs": {
+      "url": "https://github.com/cmditch/elm-ethereum-ports/issues"
+    },
+    "homepage": "https://github.com/cmditch/elm-ethereum-ports#readme",
+    "dependencies": {}
+  }
