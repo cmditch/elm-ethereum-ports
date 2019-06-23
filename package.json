@@ -1,6 +1,6 @@
 {
     "name": "elm-ethereum-ports",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Helpers to wire Elm ports to your elm-ethereum app.",
     "main": "index.js",
     "scripts": {
