@@ -1,5 +1,6 @@
 'use strict';
 
+// Tx Sentry - Send and listen to transactions form elm to web3 provider
 function txSentry(fromElm, toElm, web3) {
     checkFromElmPort(fromElm);
     checkToElmPort(toElm);
@@ -17,27 +18,35 @@ function txSentry(fromElm, toElm, web3) {
     });
 }
 
-
+// Wallet Sentry - listen to account and network changes
 function walletSentry(toElm, web3) {
     checkToElmPort(toElm);
     checkWeb3(web3);
-
     var model = { account: null, networkId: 0 };
+    getNetworkAndAccount(web3, sendModelToElm(toElm, model)) // Make initial call for data.
+    setInterval(function () { getNetworkAndAccount(web3, sendModelToElm(toElm, model)) }, 500); // Repeat on half second interval.
+}
 
-    web3.version.getNetwork(function(e, networkId) {
-        model.networkId = parseInt(networkId);
-        setInterval(function () {
-            web3.eth.getAccounts(function (e, accounts) {
-                if (model.account !== accounts[0]) {
-                    model.account = accounts[0];
-                    console.log('elm-ethereum-ports: Account set to', model.account);
-                    toElm.send(model);
-                }
-            });
-        }, 500);
+// Helper function that calls out to web3 for account/network
+function getNetworkAndAccount(web3, callback) {
+    web3.version.getNetwork(function(netError, networkId) {
+        web3.eth.getAccounts(function (accountError, accounts) {
+            if (netError) { console.log("web3.version.getNetwork Error: ", netError);}
+            if (accountError) { console.log("web3.eth.getAccounts Error: ", accountError)}
+            callback( {account: accounts[0], networkId: parseInt(networkId)} );
+        });
     });
 }
 
+// Updates model and sends to Elm if anything has changed. Curried to make callback easier.
+function sendModelToElm(toElm, globalModel) {
+    return function (newModel) {
+        if (newModel.account !== globalModel.account || newModel.networkId !== globalModel.networkId) {
+            globalModel = newModel;
+            toElm.send(globalModel);
+        }
+    }
+}
 
 // Logging Helpers
 
@@ -54,8 +63,8 @@ function checkFromElmPort(port) {
 }
 
 function checkWeb3(web3) {
-    if (typeof web3 === 'undefined') {
-        console.warn('elm-ethereum-ports: web3 object is undefined')
+    if (typeof web3 === 'undefined' || typeof web3.version === 'undefined' || typeof web3.eth === 'undefined') {
+        console.warn('elm-ethereum-ports: web3 object is undefined, or web3.version or web3.eth is missing')
     }
 }
 
